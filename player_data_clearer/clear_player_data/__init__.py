@@ -97,11 +97,26 @@ def on_load(server: ServerInterface, old_module):
             Literal('playerid')
             .then(Text('playerid_value').runs(lambda src, ctx: handle_command2(src, ctx['playerid_value'], config)))
         )
+        # 分支3: !!cpd clean <value> → 触发 handle_command3
+        .then(
+            Literal('clean')
+            .then(
+                Integer('day_value')
+                .runs(lambda src, ctx: src.reply(
+                    f"请确认清理 {ctx['day_value']} 天前的数据，输入: "
+                    f"!!cpd clean {ctx['day_value']} confirm"
+                ))
+                .then(
+                    Literal('confirm')
+                    .runs(lambda src, ctx: handle_command3(src, ctx['day_value'], config)))
+            )
+        )
     )
 
     # 注册帮助信息
     server.register_help_message('!!cpd uuid <uuid>', '清除指定UUID的玩家数据')
     server.register_help_message('!!cpd playerid <playerid>', '清除指定玩家数据')
+    server.register_help_message('!!cpd clean <day>', '清除多少天未修改的玩家数据')
 
 
 # 检查服务器是否开启了正版验证
@@ -111,7 +126,7 @@ def get_online_mode(server) -> bool:
     返回 bool 类型（True=正版验证，False=离线模式）
     """
     # 获取 server.properties 的完整路径
-    props_path = Path(server.get_mcdr_config()['working_directory']) / "server.properties"
+    props_path = os.path.join(server.get_mcdr_config()['working_directory'],"server.properties")
     
     try:
         with open(props_path, 'r', encoding='utf-8') as f:
@@ -218,6 +233,69 @@ def handle_command2(source: CommandSource, playerid: str, config):
         uuid = get_uuid(playerid, source.get_server())
 
         handle_command(source, uuid, config)
+
+    else:
+        source.reply("§c你没有权限执行此命令")
+
+
+# !!cpd clean 时执行此函数
+def handle_command3(source: CommandSource, day: int, config):
+    
+    # 检查权限
+    if source.has_permission(4):  # OP权限
+        
+        import time
+        from typing import List, Set
+
+        server = source.get_server()
+
+        def get_old_playerdata_files(server, config, days_threshold: int) -> List[str]:
+
+            # 计算时间阈值（当前时间 - days_threshold天）
+            threshold_time = time.time() - days_threshold * 86400  # 86400秒=1天
+            
+            # 构建playerdata目录路径
+            dat_path = os.path.join(
+                server.get_mcdr_config()['working_directory'],
+                config["world_dir"],
+                "playerdata1"
+            )
+            
+            unique_files: Set[str] = set()  # 用于去重的集合
+            
+            try:
+                # 遍历目录中的所有文件
+                for filename in os.listdir(dat_path):
+                    filepath = os.path.join(dat_path, filename)
+                    
+                    # 跳过目录和非文件项
+                    if not os.path.isfile(filepath):
+                        continue
+                        
+                    # 检查文件修改时间
+                    mtime = os.path.getmtime(filepath)
+                    if mtime < threshold_time:
+                        # 去除文件后缀并添加到集合中
+                        filename_no_ext = Path(filename).stem
+                        unique_files.add(filename_no_ext)
+                        
+            except FileNotFoundError:
+                server.logger.warning(f"playerdata目录不存在: {dat_path}")
+                return []
+            except Exception as e:
+                server.logger.error(f"遍历playerdata目录出错: {str(e)}")
+                return []
+            
+            return list(unique_files)  # 转换为列表返回
+
+        uuids = get_old_playerdata_files(server, config, day)
+        if uuids == []:
+            source.reply(f"§c没有天{day}内未修改的玩家存档，或是获取失败，请查看控制台日志获取详细信息")
+            return
+        for uuid in uuids:
+            handle_command(source, uuid, config)
+        
+        
 
     else:
         source.reply("§c你没有权限执行此命令")
