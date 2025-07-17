@@ -1,0 +1,15 @@
+{
+	"id": "clear_player_data",
+	"version": "1.0.0",
+	"name": "player_data_clearer",
+	"description": "清除指定UUID的玩家数据",
+	"author": [
+		"Xcuk",
+		"tch"
+	],
+	"link": "https://github.com/god-what-is-that/mcdr-player-data-clearer",
+	"dependencies": {
+		"mcdreforged": ">=2.0.0",
+		"uuid_api_remake": ">=2.0.0"
+	}
+}
