@@ -290,7 +290,7 @@ def handle_command3(source: CommandSource, day: int, config):
 
         uuids = get_old_playerdata_files(server, config, day)
         if uuids == []:
-            source.reply(f"§c没有天{day}内未修改的玩家存档，或是获取失败，请查看控制台日志获取详细信息")
+            source.reply(f"§c没有{day}天内未修改的玩家存档，或是获取失败，请查看控制台日志获取详细信息")
             return
         for uuid in uuids:
             handle_command(source, uuid, config)
