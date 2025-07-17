@@ -5,7 +5,7 @@ world_dir: "world"  # 存档文件夹名字，不要改"world_dir"
 command:
   playerid:       #输入playerid时执行
     #auth: "auth remove <playerid>"       #此为easyauth的删除玩家账号，<playerid>会被替换为输入的playerid
-  uuid:     #输入uuid时执行
+  uuid:     #输入playerid或uuid时执行
 
 # 数据文件配置
 dat:
