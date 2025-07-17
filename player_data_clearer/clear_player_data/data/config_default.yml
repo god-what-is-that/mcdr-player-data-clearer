@@ -1,0 +1,36 @@
+# 存档配置
+world_dir: "world"  # 存档文件夹名字，不要改"world_dir"
+
+# 删除的同时需要执行的命令
+command:
+  playerid:       #输入playerid时执行
+    #auth: "auth remove <playerid>"       #此为easyauth的删除玩家账号，<playerid>会被替换为输入的playerid
+  uuid:     #输入uuid时执行
+
+# 数据文件配置
+dat:
+  # playerdata包含玩家背包、末影箱等数据，删前请谨慎
+  playerdata_dir: "playerdata"
+  
+  # 如果你的存档中有就把下面的注释去掉
+  #ec_player_profiles_dir: "ec_player_profiles"         #这是Essential Commands的配置文件
+  #modplayerdata_dir: "modplayerdata"
+
+# 旧数据备份
+dat_old:
+  playerdata_dir: "playerdata"  # 一般玩家数据会有data_old作为备份
+
+# JSON数据
+json:
+  stats_dir: "stats"      # 玩家统计信息
+  advancements_dir: "advancements"  # 玩家成就信息
+
+# 文件夹配置，会删除名字为uuid的文件夹
+file:
+  # 如果你的存档中有就把下面的注释去掉
+  #player-mod-data_dir: "player-mod-data"
+
+# 添加新后缀模板（取消注释后使用）
+#新后缀:
+#  自定义key: "路径/子文件夹"  # 示例说明
+#  其他key: "其他路径"        # 注意末尾不要逗号

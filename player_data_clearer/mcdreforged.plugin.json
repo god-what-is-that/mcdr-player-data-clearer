@@ -1,0 +1,14 @@
+{
+	"id": "clear_player_data",
+	"version": "1.0.0",
+	"name": "player_data_clearer",
+	"description": "清除指定UUID的玩家数据",
+	"author": [
+		"Xcuk",
+		"tch"
+	],
+	"link": "https://github.com/xt0827/clear-player-data",
+	"dependencies": {
+		"mcdreforged": ">=2.0.0"
+	}
+}
